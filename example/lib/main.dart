@@ -55,7 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
       deleteOrigin: false,
       includeAudio: true,
     );
-    print(info!.path);
     if (info != null) {
       setState(() {
         _counter = info.path!;

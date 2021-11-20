@@ -11,7 +11,7 @@ import java.io.File
 
 class Utility(private val channelName: String) {
 
-    fun isLandscapeImage(orientation: Int) = orientation != 90 && orientation != 270
+    private fun isLandscapeImage(orientation: Int) = orientation != 90 && orientation != 270
 
     fun deleteFile(file: File) {
         if (file.exists()) {
@@ -46,11 +46,7 @@ class Utility(private val channelName: String) {
         var width = java.lang.Long.parseLong(widthStr)
         var height = java.lang.Long.parseLong(heightStr)
         val filesize = file.length()
-        val orientation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
-        } else {
-            null
-        }
+        val orientation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
         val ori = orientation?.toIntOrNull()
         if (ori != null && isLandscapeImage(ori)) {
             val tmp = width
@@ -127,8 +123,8 @@ class Utility(private val channelName: String) {
         return fileName
     }
 
-    fun deleteAllCache(context: Context, result: MethodChannel.Result) {
+    fun deleteAllCache(context: Context): Boolean {
         val dir = context.getExternalFilesDir("video_compress")
-        result.success(dir?.deleteRecursively())
+        return dir?.deleteRecursively() ?: false
     }
 }
