@@ -8,6 +8,7 @@ import android.os.Build
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
 import java.io.File
+import kotlin.math.max
 
 class Utility(private val channelName: String) {
 
@@ -95,7 +96,7 @@ class Utility(private val channelName: String) {
 
         val width = bitmap!!.width
         val height = bitmap.height
-        val max = Math.max(width, height)
+        val max = max(width, height)
         if (max > 512) {
             val scale = 512f / max
             val w = Math.round(scale * width)

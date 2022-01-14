@@ -5,7 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.otaliastudios.transcoder.Transcoder
 import com.otaliastudios.transcoder.TranscoderListener
-import com.otaliastudios.transcoder.internal.Logger
+import com.otaliastudios.transcoder.internal.utils.Logger
 import com.otaliastudios.transcoder.source.TrimDataSource
 import com.otaliastudios.transcoder.source.UriDataSource
 import com.otaliastudios.transcoder.strategy.DefaultAudioStrategy
@@ -17,7 +17,6 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,7 +31,6 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
     private var _context: Context? = null
     private var _channel: MethodChannel? = null
     private val TAG = "VideoCompressPlugin"
-    private val LOG = Logger(TAG)
     private var transcodeFuture:Future<Void>? = null
     var channelName = "video_compress"
 
@@ -90,7 +88,6 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                 val destPath: String = tempDir + File.separator + "VID_" + out + ".mp4"
 
                 var videoTrackStrategy: TrackStrategy = DefaultVideoStrategy.atMost(340).build()
-                val audioTrackStrategy: TrackStrategy
 
                 when (quality) {
 
@@ -127,7 +124,7 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                     }                    
                 }
 
-                audioTrackStrategy = if (includeAudio) {
+                val audioTrackStrategy = if (includeAudio) {
                     val sampleRate = DefaultAudioStrategy.SAMPLE_RATE_AS_INPUT
                     val channels = DefaultAudioStrategy.CHANNELS_AS_INPUT
 
@@ -195,16 +192,6 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
         channel.setMethodCallHandler(this)
         _context = context
         _channel = channel
-    }
-
-    companion object {
-        private const val TAG = "video_compress"
-
-        @JvmStatic
-        fun registerWith(registrar: Registrar) {
-            val instance = VideoCompressPlugin()
-            instance.init(registrar.context(), registrar.messenger())
-        }
     }
 
 }
