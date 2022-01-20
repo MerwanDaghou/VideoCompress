@@ -253,6 +253,9 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
                 result(jsonString)
             })
         }
+        else {
+            result("")
+        }
     }
     
     private func cancelCompression(_ result: FlutterResult) {
