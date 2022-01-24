@@ -76,25 +76,24 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
             }
             "compressVideo" -> {
                 val path = call.argument<String>("path")!!
+                val output = call.argument<String>("output")!!
                 val quality = call.argument<Int>("quality")!!
-                val deleteOrigin = call.argument<Boolean>("deleteOrigin")!!
+                //val deleteOrigin = call.argument<Boolean>("deleteOrigin")!!
                 val startTime = call.argument<Int>("startTime")
                 val duration = call.argument<Int>("duration")
                 val includeAudio = call.argument<Boolean>("includeAudio") ?: true
                 val frameRate = if (call.argument<Int>("frameRate")==null) 30 else call.argument<Int>("frameRate")
 
-                val tempDir: String = context.getExternalFilesDir("video_compress")!!.absolutePath
-                val out = SimpleDateFormat("yyyy-MM-dd hh-mm-ss", Locale.US).format(Date())
-                val destPath: String = tempDir + File.separator + "VID_" + out + ".mp4"
+                //val tempDir: String = context.getExternalFilesDir("video_compress")!!.absolutePath
+                //val out = SimpleDateFormat("yyyy-MM-dd hh-mm-ss", Locale.US).format(Date())
+                val destPath: String = output//tempDir + File.separator + "VID_" + out + ".mp4"
 
                 var videoTrackStrategy: TrackStrategy = DefaultVideoStrategy.atMost(340).build()
 
                 when (quality) {
-
                     0 -> {
                       videoTrackStrategy = DefaultVideoStrategy.atMost(720).build()
                     }
-
                     1 -> {
                         videoTrackStrategy = DefaultVideoStrategy.atMost(360).build()
                     }
@@ -102,7 +101,6 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                         videoTrackStrategy = DefaultVideoStrategy.atMost(640).build()
                     }
                     3 -> {
-
                         assert(value = frameRate != null)
                         videoTrackStrategy = DefaultVideoStrategy.Builder()
                                 .keyFrameInterval(3f)
@@ -143,12 +141,14 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                     UriDataSource(context, Uri.parse(path))
                 }
 
-
                 transcodeFuture = Transcoder.into(destPath)
                         .addDataSource(dataSource)
                         .setAudioTrackStrategy(audioTrackStrategy)
                         .setVideoTrackStrategy(videoTrackStrategy)
-                        .setListener(object : TranscoderListener {
+                        .transcode()
+
+                    /*
+                    .setListener(object : TranscoderListener {
                             override fun onTranscodeProgress(progress: Double) {
                                 channel.invokeMethod("updateProgress", progress * 100.00)
                             }
@@ -170,6 +170,8 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                                 result.success(null)
                             }
                         }).transcode()
+
+                     */
             }
             else -> {
                 result.notImplemented()

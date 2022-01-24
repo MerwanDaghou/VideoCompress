@@ -50,7 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     await VideoCompress.setLogLevel(0);
     final MediaInfo? info = await VideoCompress.compressVideo(
-      file.path,
+      path: file.path,
+      output: "",
       quality: VideoQuality.MediumQuality,
       deleteOrigin: false,
       includeAudio: true,

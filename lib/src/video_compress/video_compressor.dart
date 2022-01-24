@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_compress/src/progress_callback/compress_mixin.dart';
@@ -36,7 +37,9 @@ extension Compress on IVideoCompress {
   Future<T?> _invoke<T>(String name, [Map<String, dynamic>? params]) async {
     T? result;
     try {
-      result = params != null ? await channel.invokeMethod(name, params) : await channel.invokeMethod(name);
+      result = params != null
+          ? await channel.invokeMethod(name, params)
+          : await channel.invokeMethod(name);
     } on PlatformException catch (e) {
       debugPrint('''Error from VideoCompress: 
       Method: $name
@@ -117,10 +120,11 @@ extension Compress on IVideoCompress {
   /// );
   /// debugPrint(info.toJson());
   /// ```
-  Future<MediaInfo?> compressVideo(
-    String path, {
+  Future<MediaInfo?> compressVideo({
+    required String path,
     VideoQuality quality = VideoQuality.DefaultQuality,
     bool deleteOrigin = false,
+    required String output,
     int? startTime,
     int? duration,
     bool? includeAudio,

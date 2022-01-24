@@ -36,6 +36,7 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
             getMediaInfo(path, result)
         case "compressVideo":
             let path = args!["path"] as! String
+            let output = args!["output"] as! String
             var quality = 5
             if (args!["quality"] != nil) {
                 quality = args!["quality"] as! Int
@@ -45,7 +46,7 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
             let duration = args!["duration"] as? Double
             let includeAudio = args!["includeAudio"] as? Bool
             let frameRate = args!["frameRate"] as? Int
-            compressVideo(path, quality, deleteOrigin, startTime, duration, includeAudio, frameRate, result)
+            compressVideo(path, output, quality, deleteOrigin, startTime, duration, includeAudio, frameRate, result)
         case "cancelCompression":
             cancelCompression(result)
         case "deleteAllCache":
@@ -176,7 +177,7 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
         return composition    
     }
     
-    private func compressVideo(_ path: String,_ quality: Int,_ deleteOrigin: Bool,_ startTime: Double?,
+    private func compressVideo(_ path: String,_ output: String, _ quality: Int,_ deleteOrigin: Bool,_ startTime: Double?,
                                _ duration: Double?,_ includeAudio: Bool?,_ frameRate: Int?,
                                _ result: @escaping FlutterResult) {
         let sourceVideoUrl = Utility.getPathUrl(path)
@@ -185,8 +186,7 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
         let sourceVideoAsset = avController.getVideoAsset(sourceVideoUrl)
         let sourceVideoTrack = avController.getTrack(sourceVideoAsset)
         
-        let compressionUrl =
-            Utility.getPathUrl("\(Utility.basePath())/\(Utility.getFileName(path)).\(sourceVideoType)")
+        let compressionUrl = Utility.getPathUrl(output) //Utility.getPathUrl("\(Utility.basePath())/\(Utility.getFileName(path)).\(sourceVideoType)")
         
         let timescale = sourceVideoAsset.duration.timescale
         let minStartTime = Double(startTime ?? 0)
