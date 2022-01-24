@@ -145,10 +145,7 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                         .addDataSource(dataSource)
                         .setAudioTrackStrategy(audioTrackStrategy)
                         .setVideoTrackStrategy(videoTrackStrategy)
-                        .transcode()
-
-                    /*
-                    .setListener(object : TranscoderListener {
+                        .setListener(object : TranscoderListener {
                             override fun onTranscodeProgress(progress: Double) {
                                 channel.invokeMethod("updateProgress", progress * 100.00)
                             }
@@ -171,7 +168,6 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                             }
                         }).transcode()
 
-                     */
             }
             else -> {
                 result.notImplemented()
