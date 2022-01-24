@@ -144,6 +144,7 @@ extension Compress on IVideoCompress {
     setProcessingStatus(true);
     final jsonStr = await _invoke<String>('compressVideo', {
       'path': path,
+      'output': output,
       'quality': quality.index,
       'deleteOrigin': deleteOrigin,
       'startTime': startTime,
