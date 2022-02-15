@@ -138,6 +138,7 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                     UriDataSource(context, Uri.parse(path))
                 }
 
+
                 transcodeFuture = Transcoder.into(destPath)
                         .addDataSource(dataSource)
                         .setAudioTrackStrategy(audioTrackStrategy)
