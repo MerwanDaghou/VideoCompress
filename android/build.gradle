@@ -44,6 +44,6 @@ android {
 dependencies {
     //implementation 'com.github.jumperson:Transcoder'
     //implementation 'com.otaliastudios:transcoder:0.10.4'
-    implementation 'com.github.Tom3652:Transcoder:v0.10.5'
+    implementation 'com.github.Tom3652:Transcoder:v0.10.6'
     //implementation files('./src/main/transcoder.aar')
 }
