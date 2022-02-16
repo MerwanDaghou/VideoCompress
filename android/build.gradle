@@ -10,7 +10,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:7.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -44,6 +44,6 @@ android {
 dependencies {
     //implementation 'com.github.jumperson:Transcoder'
     //implementation 'com.otaliastudios:transcoder:0.10.4'
-    //implementation 'com.github.Tom3652:AndroidTranscoder'
-    implementation files('./src/main/transcoder.aar')
+    implementation 'com.github.Tom3652:Transcoder:v0.10.5'
+    //implementation files('./src/main/transcoder.aar')
 }
