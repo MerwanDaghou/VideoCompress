@@ -63,11 +63,15 @@ class Utility(private val channelName: String) {
 
         val json = JSONObject()
 
+        Log.d(TAG, "After rotation width is : $width and height $height")
+
         json.put("path", path)
         json.put("title", title)
         json.put("author", author)
         json.put("width", width)
+        Log.d(TAG, "Json after setting width is : $width");
         json.put("height", height)
+        Log.d(TAG, "Json after setting height is : $height");
         json.put("duration", duration)
         json.put("fileSize", fileSize)
         if (ori != null) {
