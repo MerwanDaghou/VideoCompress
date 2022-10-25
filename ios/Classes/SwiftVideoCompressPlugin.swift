@@ -109,7 +109,7 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
         let author = avController.getMetaDataByTag(metadataAsset,key: "author")
         
         let duration = asset.duration.seconds * 1000
-        let filesize = track.totalSampleDataLength
+        let fileSize = track.totalSampleDataLength
         
         let size = track.naturalSize.applying(track.preferredTransform)
         
@@ -123,7 +123,7 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
             "width":width,
             "height":height,
             "duration":duration,
-            "filesize":filesize,
+            "fileSize":fileSize,
             "orientation":orientation
             ] as [String : Any?]
         return dictionary
