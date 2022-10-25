@@ -17,10 +17,18 @@ class CompressMixin {
 
   bool get isCompressing => _isCompressing;
 
-  @protected
+  String _pathCompressed = "";
+
+  String get pathCompressed => _pathCompressed;
+
   void setProcessingStatus(bool status) {
     _isCompressing = status;
   }
+
+  void setProcessingFile(String path) {
+    _pathCompressed = path;
+  }
+
 
   Future<void> _progressCallback(MethodCall call) async {
     switch (call.method) {

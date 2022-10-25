@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -140,8 +139,8 @@ extension Compress on IVideoCompress {
       debugPrint('''VideoCompress: You can try to subscribe to the 
       compressProgress\$ stream to know the compressing state.''');
     }
-    // ignore: invalid_use_of_protected_member
     setProcessingStatus(true);
+    setProcessingFile(path);
     final jsonStr = await _invoke<String>('compressVideo', {
       'path': path,
       'output': output,
@@ -153,8 +152,8 @@ extension Compress on IVideoCompress {
       'frameRate': frameRate,
     });
 
-    // ignore: invalid_use_of_protected_member
     setProcessingStatus(false);
+    setProcessingFile("");
 
     if (jsonStr != null) {
       final jsonMap = json.decode(jsonStr);
@@ -181,4 +180,5 @@ extension Compress on IVideoCompress {
       'logLevel': logLevel,
     });
   }
+
 }
