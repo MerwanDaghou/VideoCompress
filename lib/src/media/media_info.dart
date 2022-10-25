@@ -11,7 +11,7 @@ class MediaInfo {
   int? orientation;
 
   /// bytes
-  int? filesize; // filesize
+  int? fileSize; // file size
   /// microsecond
   double? duration;
   bool? isCancel;
@@ -24,7 +24,7 @@ class MediaInfo {
     this.width,
     this.height,
     this.orientation,
-    this.filesize,
+    this.fileSize,
     this.duration,
     this.isCancel,
     this.file,
@@ -37,7 +37,7 @@ class MediaInfo {
     width = json['width'];
     height = json['height'];
     orientation = json['orientation'];
-    filesize = json['filesize'];
+    fileSize = json['fileSize'];
     duration = double.tryParse('${json['duration']}');
     isCancel = json['isCancel'];
     file = File(path!);
@@ -53,7 +53,7 @@ class MediaInfo {
     if (this.orientation != null) {
       data['orientation'] = this.orientation;
     }
-    data['filesize'] = this.filesize;
+    data['fileSize'] = this.fileSize;
     data['duration'] = this.duration;
     if (this.isCancel != null) {
       data['isCancel'] = this.isCancel;
