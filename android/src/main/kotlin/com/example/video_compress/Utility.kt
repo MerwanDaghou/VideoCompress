@@ -5,12 +5,16 @@ import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
 import java.io.File
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 class Utility(private val channelName: String) {
+
+    private val TAG = "Utility"
 
     private fun isLandscapeImage(orientation: Int) = orientation != 90 && orientation != 270
 
@@ -43,18 +47,19 @@ class Utility(private val channelName: String) {
         val author = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR) ?: ""
         val widthStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
         val heightStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
-        val duration = java.lang.Long.parseLong(durationStr)
-        var width = java.lang.Long.parseLong(widthStr)
-        var height = java.lang.Long.parseLong(heightStr)
-        val filesize = file.length()
+        val duration = durationStr?.let { java.lang.Long.parseLong(it) }
+        var width = widthStr?.let { java.lang.Long.parseLong(it) }
+        var height = heightStr?.let { java.lang.Long.parseLong(it) }
+        val fileSize = file.length()
         val orientation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
         val ori = orientation?.toIntOrNull()
+        Log.d(TAG, "Width is : $widthStr and height $heightStr")
         if (ori != null && isLandscapeImage(ori)) {
             val tmp = width
             width = height
             height = tmp
         }
-
+        Log.d(TAG, "Width is : $widthStr and height $heightStr after rotation")
         retriever.release()
 
         val json = JSONObject()
@@ -65,7 +70,7 @@ class Utility(private val channelName: String) {
         json.put("width", width)
         json.put("height", height)
         json.put("duration", duration)
-        json.put("filesize", filesize)
+        json.put("fileSize", fileSize)
         if (ori != null) {
             json.put("orientation", ori)
         }
@@ -99,8 +104,8 @@ class Utility(private val channelName: String) {
         val max = max(width, height)
         if (max > 512) {
             val scale = 512f / max
-            val w = Math.round(scale * width)
-            val h = Math.round(scale * height)
+            val w = (scale * width).roundToInt()
+            val h = (scale * height).roundToInt()
             bitmap = Bitmap.createScaledBitmap(bitmap, w, h, true)
         }
 
