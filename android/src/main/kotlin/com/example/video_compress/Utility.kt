@@ -4,8 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Build
-import android.util.Log
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
 import java.io.File
@@ -14,9 +12,7 @@ import kotlin.math.roundToInt
 
 class Utility(private val channelName: String) {
 
-    private val TAG = "Utility"
-
-    private fun isLandscapeImage(orientation: Int) = orientation != 90 && orientation != 270
+    private fun isLandscapeImage(orientation: Int) = (orientation / 90) % 2 != 0
 
     fun deleteFile(file: File) {
         if (file.exists()) {
@@ -53,7 +49,6 @@ class Utility(private val channelName: String) {
         val fileSize = file.length()
         val orientation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
         val ori = orientation?.toIntOrNull()
-        Log.d(TAG, "Width is : $width and height $height")
         if (ori != null && isLandscapeImage(ori)) {
             val tmp = width
             width = height
@@ -63,21 +58,16 @@ class Utility(private val channelName: String) {
 
         val json = JSONObject()
 
-        Log.d(TAG, "After rotation width is : $width and height $height")
-
         json.put("path", path)
         json.put("title", title)
         json.put("author", author)
         json.put("width", width)
-        Log.d(TAG, "Json after setting width is : $width");
         json.put("height", height)
-        Log.d(TAG, "Json after setting height is : $height");
         json.put("duration", duration)
         json.put("fileSize", fileSize)
         if (ori != null) {
             json.put("orientation", ori)
         }
-        Log.d(TAG, "Json media info : $json")
         return json
     }
 
