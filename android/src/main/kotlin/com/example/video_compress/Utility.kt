@@ -53,13 +53,12 @@ class Utility(private val channelName: String) {
         val fileSize = file.length()
         val orientation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
         val ori = orientation?.toIntOrNull()
-        Log.d(TAG, "Width is : $widthStr and height $heightStr")
+        Log.d(TAG, "Width is : $width and height $height")
         if (ori != null && isLandscapeImage(ori)) {
             val tmp = width
             width = height
             height = tmp
         }
-        Log.d(TAG, "Width is : $widthStr and height $heightStr after rotation")
         retriever.release()
 
         val json = JSONObject()
@@ -74,7 +73,7 @@ class Utility(private val channelName: String) {
         if (ori != null) {
             json.put("orientation", ori)
         }
-
+        Log.d(TAG, "Json media info : $json")
         return json
     }
 

@@ -1,4 +1,5 @@
-import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 
 class MediaInfo {
   String? path;
@@ -15,7 +16,6 @@ class MediaInfo {
   /// microsecond
   double? duration;
   bool? isCancel;
-  File? file;
 
   MediaInfo({
     required this.path,
@@ -27,10 +27,10 @@ class MediaInfo {
     this.fileSize,
     this.duration,
     this.isCancel,
-    this.file,
   });
 
   MediaInfo.fromJson(Map<String, dynamic> json) {
+    debugPrint("Json is : $json");
     path = json['path'];
     title = json['title'];
     author = json['author'];
@@ -40,11 +40,10 @@ class MediaInfo {
     fileSize = json['fileSize'];
     duration = double.tryParse('${json['duration']}');
     isCancel = json['isCancel'];
-    file = File(path!);
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = {};
     data['path'] = this.path;
     data['title'] = this.title;
     data['author'] = this.author;
@@ -58,7 +57,12 @@ class MediaInfo {
     if (this.isCancel != null) {
       data['isCancel'] = this.isCancel;
     }
-    data['file'] = File(path!).toString();
     return data;
   }
+
+  @override
+  String toString() {
+    return "MediaInfo - width: $width - height $height - orientation $orientation";
+  }
+
 }
