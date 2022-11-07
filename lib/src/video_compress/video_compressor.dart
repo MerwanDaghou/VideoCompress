@@ -104,6 +104,29 @@ extension Compress on IVideoCompress {
     return MediaInfo.fromJson(jsonMap);
   }
 
+  /// Tells if the file [path] should be compressed or not.
+  /// Sometimes you may have an already compressed file as input.
+  ///
+  /// This plugin export a new asset video to the target resolution,
+  /// which means that if the target is higher than the input, the compression
+  /// results in a larger file and lower quality, which is unwanted.
+  Future<bool> _shouldCompress(String path) async {
+    MediaInfo info = await getMediaInfo(path);
+    int? width = info.width;
+    int? height = info.height;
+    if (width != null && height != null) {
+      double percentThreshold = 1.2;
+      if (info.isLandscape != null && info.isLandscape!) {
+        return width > 960 * percentThreshold &&
+            height > 540 * percentThreshold;
+      } else {
+        return height > 960 * percentThreshold &&
+            width > 540 * percentThreshold;
+      }
+    }
+    return true;
+  }
+
   /// compress video from [path]
   /// compress video from [path] return [Future<MediaInfo>]
   ///
@@ -126,6 +149,7 @@ extension Compress on IVideoCompress {
     required String output,
     int? startTime,
     int? duration,
+    bool shouldAvoidCompressionIfNotNeeded=true,
     bool? includeAudio,
     int frameRate = 30,
   }) async {
@@ -139,27 +163,32 @@ extension Compress on IVideoCompress {
       debugPrint('''VideoCompress: You can try to subscribe to the 
       compressProgress\$ stream to know the compressing state.''');
     }
-    setProcessingStatus(true);
-    setProcessingFile(path);
-    final jsonStr = await _invoke<String>('compressVideo', {
-      'path': path,
-      'output': output,
-      'quality': quality.index,
-      'deleteOrigin': deleteOrigin,
-      'startTime': startTime,
-      'duration': duration,
-      'includeAudio': includeAudio,
-      'frameRate': frameRate,
-    });
+    bool shouldCompress = shouldAvoidCompressionIfNotNeeded ? await _shouldCompress(path) : true;
+    if (shouldCompress) {
+      setProcessingStatus(true);
+      setProcessingFile(path);
+      final jsonStr = await _invoke<String>('compressVideo', {
+        'path': path,
+        'output': output,
+        'quality': quality.index,
+        'deleteOrigin': deleteOrigin,
+        'startTime': startTime,
+        'duration': duration,
+        'includeAudio': includeAudio,
+        'frameRate': frameRate,
+      });
 
-    setProcessingStatus(false);
-    setProcessingFile("");
+      setProcessingStatus(false);
+      setProcessingFile("");
 
-    if (jsonStr != null) {
-      final jsonMap = json.decode(jsonStr);
-      return MediaInfo.fromJson(jsonMap);
+      if (jsonStr != null) {
+        final jsonMap = json.decode(jsonStr);
+        return MediaInfo.fromJson(jsonMap);
+      } else {
+        return null;
+      }
     } else {
-      return null;
+      return getMediaInfo(path);
     }
   }
 
@@ -180,5 +209,4 @@ extension Compress on IVideoCompress {
       'logLevel': logLevel,
     });
   }
-
 }
