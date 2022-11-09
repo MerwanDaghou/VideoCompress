@@ -149,7 +149,7 @@ extension Compress on IVideoCompress {
     required String output,
     int? startTime,
     int? duration,
-    bool shouldAvoidCompressionIfNotNeeded=false,
+    bool shouldAvoidCompressionIfNotNeeded=true,
     bool? includeAudio,
     int frameRate = 30,
   }) async {
