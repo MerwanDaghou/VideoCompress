@@ -3,6 +3,7 @@ import AVFoundation
 import MobileCoreServices
 
 class AvController: NSObject {
+
     public func getVideoAsset(_ url:URL)->AVURLAsset {
         return AVURLAsset(url: url)
     }

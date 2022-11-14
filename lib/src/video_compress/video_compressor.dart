@@ -115,13 +115,10 @@ extension Compress on IVideoCompress {
     int? width = info.width;
     int? height = info.height;
     if (width != null && height != null) {
-      double percentThreshold = 1.2;
       if (info.isLandscape != null && info.isLandscape!) {
-        return width > 960 * percentThreshold &&
-            height > 540 * percentThreshold;
+        return width > 1100 && height > 640;
       } else {
-        return height > 960 * percentThreshold &&
-            width > 540 * percentThreshold;
+        return height > 1100 && width > 640;
       }
     }
     return true;
@@ -153,18 +150,21 @@ extension Compress on IVideoCompress {
     bool? includeAudio,
     int frameRate = 30,
   }) async {
-    if (isCompressing) {
-      throw StateError('''VideoCompress Error: 
-      Method: compressVideo
-      Already have a compression process, you need to wait for the process to finish or stop it''');
-    }
 
-    if (compressProgress$.notSubscribed) {
-      debugPrint('''VideoCompress: You can try to subscribe to the 
-      compressProgress\$ stream to know the compressing state.''');
-    }
     bool shouldCompress = shouldAvoidCompressionIfNotNeeded ? await _shouldCompress(path) : true;
     if (shouldCompress) {
+
+      if (isCompressing) {
+        throw StateError('''VideoCompress Error: 
+      Method: compressVideo
+      Already have a compression process, you need to wait for the process to finish or stop it''');
+      }
+
+      if (compressProgress$.notSubscribed) {
+        debugPrint('''VideoCompress: You can try to subscribe to the 
+      compressProgress\$ stream to know the compressing state.''');
+      }
+
       setProcessingStatus(true);
       setProcessingFile(path);
       final jsonStr = await _invoke<String>('compressVideo', {
