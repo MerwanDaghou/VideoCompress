@@ -17,7 +17,7 @@ class MediaInfo {
   double? duration;
   bool? isCancel;
 
-  bool? isLandscape;
+  bool get isLandscape => orientation != null && (orientation! / 90) % 2 != 0;
 
   MediaInfo({
     required this.path,
@@ -29,7 +29,6 @@ class MediaInfo {
     this.fileSize,
     this.duration,
     this.isCancel,
-    this.isLandscape
   });
 
   MediaInfo.fromJson(Map<String, dynamic> json) {
@@ -43,7 +42,6 @@ class MediaInfo {
     fileSize = json['fileSize'];
     duration = double.tryParse('${json['duration']}');
     isCancel = json['isCancel'];
-    isLandscape = json["isLandscape"];
   }
 
   Map<String, dynamic> toJson() {
@@ -61,7 +59,6 @@ class MediaInfo {
     if (this.isCancel != null) {
       data['isCancel'] = this.isCancel;
     }
-    data["isLandscape"] = this.isLandscape;
     return data;
   }
 

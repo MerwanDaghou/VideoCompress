@@ -115,7 +115,7 @@ extension Compress on IVideoCompress {
     int? width = info.width;
     int? height = info.height;
     if (width != null && height != null) {
-      if (info.isLandscape != null && info.isLandscape!) {
+      if (info.isLandscape) {
         return width > 1100 && height > 640;
       } else {
         return height > 1100 && width > 640;
