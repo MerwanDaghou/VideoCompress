@@ -17,7 +17,7 @@ class MediaInfo {
   double? duration;
   bool? isCancel;
 
-  bool get isLandscape => orientation != null && (orientation! / 90) % 2 != 0;
+  bool? get isLandscape => orientation == null ? null : (orientation! / 90) % 2 != 0;
 
   MediaInfo({
     required this.path,

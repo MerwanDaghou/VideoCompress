@@ -116,13 +116,7 @@ extension Compress on IVideoCompress {
     int? height = info.height;
     bool shouldCompress = true;
     if (width != null && height != null) {
-      if (info.isLandscape) {
-        debugPrint("Video is landscape and width is : $width and height : $height");
-        shouldCompress = width > 1100 && height > 640;
-      } else {
-        debugPrint("Video is not landscape and width is : $width and height : $height");
-        shouldCompress = height > 1100 && width > 640;
-      }
+      shouldCompress = (width > 1100 && height > 640) || (height > 1100 && width > 640);
     }
     debugPrint("Should compress : $shouldCompress");
     return shouldCompress;
