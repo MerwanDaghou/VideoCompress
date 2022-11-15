@@ -114,14 +114,18 @@ extension Compress on IVideoCompress {
     MediaInfo info = await getMediaInfo(path);
     int? width = info.width;
     int? height = info.height;
+    bool shouldCompress = true;
     if (width != null && height != null) {
       if (info.isLandscape) {
-        return width > 1100 && height > 640;
+        debugPrint("Video is landscape and width is : $width and height : $height");
+        shouldCompress = width > 1100 && height > 640;
       } else {
-        return height > 1100 && width > 640;
+        debugPrint("Video is not landscape and width is : $width and height : $height");
+        shouldCompress = height > 1100 && width > 640;
       }
     }
-    return true;
+    debugPrint("Should compress : $shouldCompress");
+    return shouldCompress;
   }
 
   /// compress video from [path]
