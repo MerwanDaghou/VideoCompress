@@ -145,17 +145,20 @@ class _CompressPageState extends State<CompressPage> {
         File file = File(
             "${dir.path}/compress_video${DateTime.now().millisecondsSinceEpoch}.mp4");
 
+        bool isLowRes = false;
         double ratio = infoOrigin.height / infoOrigin.width;
 
         double newHeight = 0;
         double newWidth = 0;
 
+        double maxSize = isLowRes ? 480 : 960;
+
         print("ratio : $ratio");
         if (ratio <= 1) {
-          newWidth = min(640, infoOrigin.width.floorToDouble());
+          newWidth = min(maxSize, infoOrigin.width.floorToDouble());
           newHeight = newWidth * ratio;
         } else {
-          newHeight = min(640, infoOrigin.height.floorToDouble());
+          newHeight = min(maxSize, infoOrigin.height.floorToDouble());
           newWidth = newHeight / ratio;
         }
         print("new width : $newWidth");
@@ -165,8 +168,10 @@ class _CompressPageState extends State<CompressPage> {
             ? await VideoCompress.compressVideoIOS(
                 input: originFile,
                 output: file.path,
+                bitrate: 1000000,
                 width: newWidth,
-                height: newHeight)
+                height: newHeight,
+                isLowRes: isLowRes)
             : (await VideoCompress.compressVideoAndroid(
                 path: originFile,
                 output: file.path,

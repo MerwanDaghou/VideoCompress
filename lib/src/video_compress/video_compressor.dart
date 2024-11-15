@@ -272,12 +272,17 @@ extension Compress on IVideoCompress {
       required String output,
       required double width,
       required double height,
-      int bitrate = 2500000,
-      int frameRate = 30}) async {
+      int bitrate = 1000000,
+      int frameRate = 30,
+        bool isLowRes=false}) async {
 
-    String? output;
+    if(isLowRes) {
+      bitrate = (bitrate/10).floor();
+      frameRate = 20;
+    }
+    String? result;
     try {
-      output = await _invoke("compressVideoIOS", {
+      result = await _invoke("compressVideoIOS", {
         "inputFile": input,
         "outputFile": output,
         "width": width,
@@ -288,7 +293,7 @@ extension Compress on IVideoCompress {
     } catch (e) {
       print("error while comressing ios video : $e");
     }
-    return output;
+    return result;
   }
 
   /// stop compressing the file that is currently being compressed.

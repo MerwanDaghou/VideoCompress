@@ -325,10 +325,10 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
             }
 
             let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first!
-            let audioTrack = asset.tracks(withMediaType: AVMediaType.audio).first!
+            let audioTrack = asset.tracks(withMediaType: AVMediaType.audio).first
 
             let videoFormatDescription = videoTrack.formatDescriptions.first as! CMFormatDescription
-            let audioFormatDescription = audioTrack.formatDescriptions.first as! CMFormatDescription
+            let audioFormatDescription = audioTrack != nil ? audioTrack!.formatDescriptions.first as! CMFormatDescription : nil
 
 
                     // HANDLE ROTATIONS
@@ -414,7 +414,7 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
     //                    ]
 
             let assetReaderVideoOutput = AVAssetReaderTrackOutput(track: videoTrack, outputSettings: videoReaderSettings)
-            let assetReaderAudioOutput = AVAssetReaderTrackOutput(track: audioTrack,outputSettings: nil)
+            let assetReaderAudioOutput = audioTrack != nil ? AVAssetReaderTrackOutput(track: audioTrack!,outputSettings: nil) : nil
 
 
             if assetReader!.canAdd(assetReaderVideoOutput){
@@ -424,15 +424,19 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
                 fatalError("Couldn't add video output reader")
             }
 
-            if assetReader!.canAdd(assetReaderAudioOutput){
-                assetReader!.add(assetReaderAudioOutput)
-            }else{
-                completion(nil,nil)
-                fatalError("Couldn't add audio output reader")
+            if(assetReaderAudioOutput != nil) {
+                if assetReader!.canAdd(assetReaderAudioOutput!){
+                    assetReader!.add(assetReaderAudioOutput!)
+                }else{
+                    completion(nil,nil)
+                    fatalError("Couldn't add audio output reader")
+                }
             }
 
-            let audioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: nil,sourceFormatHint: audioFormatDescription)
-                        audioInput.expectsMediaDataInRealTime = true
+            let audioInput = audioTrack != nil ? AVAssetWriterInput(mediaType: .audio, outputSettings: nil,sourceFormatHint: audioFormatDescription) : nil
+            if(audioInput != nil) {
+                audioInput!.expectsMediaDataInRealTime = true
+            }
 
 
             let videoInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoOutputSettings,sourceFormatHint: videoFormatDescription)
@@ -459,7 +463,12 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
 
             assetWriter!.shouldOptimizeForNetworkUse = true
             assetWriter!.add(videoInput)
-            assetWriter!.add(audioInput)
+            if(audioInput != nil) {
+                assetWriter!.add(audioInput!)
+            }
+            else {
+                audioFinished = true
+            }
 
             assetWriter!.startWriting()
             assetReader!.startReading()
@@ -475,19 +484,23 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
                     self.assetReader?.cancelReading()
                 }
             }
-
-            audioInput.requestMediaDataWhenReady(on: audioInputQueue) {
-                while(audioInput.isReadyForMoreMediaData){
-                    let sample = assetReaderAudioOutput.copyNextSampleBuffer()
-                    if (sample != nil){
-                        audioInput.append(sample!)
-                    }else{
-                        audioInput.markAsFinished()
-                        DispatchQueue.main.async {
-                            audioFinished = true
-                            closeWriter()
+            
+            
+            if(audioInput != nil && assetReaderAudioOutput != nil) {
+                
+                audioInput!.requestMediaDataWhenReady(on: audioInputQueue) {
+                    while(audioInput!.isReadyForMoreMediaData){
+                        let sample = assetReaderAudioOutput!.copyNextSampleBuffer()
+                        if (sample != nil){
+                            audioInput!.append(sample!)
+                        }else{
+                            audioInput!.markAsFinished()
+                            DispatchQueue.main.async {
+                                audioFinished = true
+                                closeWriter()
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
             }
