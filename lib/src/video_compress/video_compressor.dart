@@ -244,6 +244,9 @@ extension Compress on IVideoCompress {
       'duration': duration,
       'includeAudio': includeAudio,
       'frameRate': frameRate,
+      "channels": channels,
+      "audioBitRate": audioBitRate,
+      "sampleRate": sampleRate
     });
 
     setProcessingStatus(false);
