@@ -208,7 +208,7 @@ extension Compress on IVideoCompress {
 
     String? output;
     try {
-       output = await compressChannel.invokeMethod("compressVideo", {
+       output = await compressChannel.invokeMethod("compressVideoIOS", {
         "inputFile": input,
         "outputFile": output,
         "width": width,

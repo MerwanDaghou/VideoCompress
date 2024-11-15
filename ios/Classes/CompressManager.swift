@@ -17,7 +17,7 @@ public class CompressManagerPlugin: NSObject, FlutterPlugin {
     }
 
     func handle(call: FlutterMethodCall, result: @escaping FlutterResult) {
-            if(call.method.elementsEqual("compressVideo")) {
+            if(call.method.elementsEqual("compressVideoIOS")) {
                 let args = call.arguments as! Dictionary<String, Any>
 
                 let inputPath = args["inputFile"] as! String
