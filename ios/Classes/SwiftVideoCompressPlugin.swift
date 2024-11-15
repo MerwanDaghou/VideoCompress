@@ -9,6 +9,7 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
     private let avController = AvController()
     private var assetReader: AVAssetReader?
     private var assetWriter: AVAssetWriter?
+    private var isCompressing = false
     
     init(channel: FlutterMethodChannel) {
         self.channel = channel
@@ -303,7 +304,12 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
         // ------------------------------------------------------------------
 
         func startCompression(inputURL: URL,outputURL: URL, videoSize: CGSize, frameRate: Int32, bitrate: Int?,completion: @escaping (URL?, Error?) -> Void) throws {
-
+             if(isCompressing) {
+             completion(nil,nil)
+             print("cannot compress multiple file at the same time")
+                return
+             }
+             isCompressing = true
             //video file to make the asset
 
             var audioFinished = false
@@ -477,11 +483,12 @@ public class SwiftVideoCompressPlugin: NSObject, FlutterPlugin {
 
 
             let closeWriter:()->Void = {
-                if (videoFinished && audioFinished){
+                if (videoFinished && audioFinished) {
                     self.assetWriter?.finishWriting(completionHandler: {
                         completion((self.assetWriter?.outputURL)!,nil)
                     })
                     self.assetReader?.cancelReading()
+                    self.isCompressing = false
                 }
             }
             

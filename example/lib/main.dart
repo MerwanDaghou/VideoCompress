@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:video_compress_example/compress_page.dart';
+import 'package:video_compress_example/compress/compress_folder.dart';
+import 'package:video_compress_example/compress/compress_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: CompressPage(),
+      home: CompressFolder(),
     );
   }
 }

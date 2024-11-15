@@ -5,13 +5,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_compress/video_compress.dart';
-import 'package:video_compress_example/video_player_app.dart';
+import 'package:video_compress_example/widgets/video_player_app.dart';
+
+import 'media_manager.dart';
 
 class CompressPage extends StatefulWidget {
-  const CompressPage({super.key});
+  final String? file;
+  const CompressPage({super.key, this.file});
 
   @override
   State<CompressPage> createState() => _CompressPageState();
@@ -23,18 +25,43 @@ class _CompressPageState extends State<CompressPage> {
   String originFile = "";
   String compressedFile = "";
 
+  MediaManager mediaManager = MediaManager();
   VideoInfo infoOrigin = VideoInfo();
   VideoInfo infoCompressed = VideoInfo();
 
   final MethodChannel compressChannel = const MethodChannel("VideoCompress");
 
+  Future<void> init() async {
+    originFile = widget.file ?? "";
+    if(originFile.isNotEmpty) {
+      infoOrigin = await mediaManager.getInfo(originFile);
+      setState(() {
+
+      });
+    }
+  }
+  @override
+  void initState() {
+    init();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (compressedFile.isNotEmpty) {
+      print("delete file : $compressedFile");
+      File(compressedFile).deleteSync();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: widget.file == null ? FloatingActionButton(
         onPressed: onNewPostTap,
         child: const Icon(CupertinoIcons.add),
-      ),
+      ) : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(15),
         child: Column(
@@ -59,13 +86,13 @@ class _CompressPageState extends State<CompressPage> {
               ),
             ),
             const SizedBox(height: 30),
-            Center(
+           /* Center(
               child: CupertinoButton(
                 color: Colors.redAccent,
                 onPressed: onSave,
                 child: const Text("Save"),
               ),
-            ),
+            ),*/
             const SizedBox(height: 50),
           ],
         ),
@@ -79,7 +106,7 @@ class _CompressPageState extends State<CompressPage> {
     bool mute = true,
     required double width,
   }) {
-    bool video = isVideo(file);
+    bool video = mediaManager.isVideo(file);
     print(
         "Origin info : ${"Width : ${info.width} |  Height : ${info.height} |  Size : ${info.size}"}");
     print("\n-----------------------------\n");
@@ -92,11 +119,6 @@ class _CompressPageState extends State<CompressPage> {
               file: file,
               mute: mute,
               shouldLoop: true,
-              onSizeChanged: (Size value) {
-                info.width = value.width.floor();
-                info.height = value.height.floor();
-                setState(() {});
-              },
             ),
           ),
         if (!video) Image.file(File(file)),
@@ -117,7 +139,7 @@ class _CompressPageState extends State<CompressPage> {
         compressedFile = "";
       });
       await Future.delayed(const Duration(seconds: 1));
-      infoOrigin = await getInfo(xfile.path);
+      infoOrigin = await mediaManager.getInfo(xfile.path);
       setState(() {
         originFile = xfile.path;
       });
@@ -134,7 +156,7 @@ class _CompressPageState extends State<CompressPage> {
         compressedFile = "";
       });
 
-      bool video = isVideo(originFile);
+      bool video = mediaManager.isVideo(originFile);
       if (video) {
         /*MediaInfo? mediaInfo = await VideoCompress.compressVideo(
           originFile,
@@ -193,7 +215,7 @@ class _CompressPageState extends State<CompressPage> {
         });*/
         print("compressed result : $output");
         if (output != null) {
-          infoCompressed = await getInfo(output);
+          infoCompressed = await mediaManager.getInfo(output);
           //infoCompressed.height = mediaInfo!.height!;
           //infoCompressed.width = mediaInfo!.width!;
           //print("file compressed : ${temp.path}");
@@ -224,88 +246,6 @@ class _CompressPageState extends State<CompressPage> {
     }
   }
 
-  bool isVideo(String path) {
-    String? result = lookupMimeType(path);
-    return result?.startsWith("video/") ?? false;
-  }
 
-  Future<VideoInfo> getInfo(String file) async {
-    final video = isVideo(file);
-    int width = 0;
-    int height = 0;
-    int duration = 0;
-    if (video) {
-      //Map<String, dynamic> values = await _uploader.getMediaInfo(file);
-      //width = values["width"] ?? 0;
-      //height = values["height"] ?? 0;
-      //duration = values["duration"] ?? 0;
-    } else {
-      var decodedImage =
-          await decodeImageFromList(File(file).readAsBytesSync());
-      width = decodedImage.width;
-      height = decodedImage.height;
-    }
-    String size = await getFileSize(File(file));
-    return VideoInfo(
-        width: width, height: height, durationInMs: duration, size: size);
-  }
 
-  /*Future<String> getFileSize(String filepath, int decimals) async {
-    var file = File(filepath);
-    int bytes = await file.length();
-    if (bytes <= 0) return "0 B";
-    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-    var i = (log(bytes) / log(1024)).floor();
-    return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
-  }*/
-
-  Future<String> getFileSize(File file) async {
-    try {
-      // Get the size of the file in bytes
-      int fileSizeInBytes = await file.length();
-
-      // Convert the file size to a human-readable format (e.g., KB, MB, GB)
-      String fileSize = _formatFileSize(fileSizeInBytes);
-
-      // Get the file extension (e.g., .jpg, .png, etc.)
-      //String fileExtension = path.extension(file.path);
-
-      // Return the file details including the size and extension
-      return fileSize;
-    } catch (e) {
-      return "0";
-    }
-  }
-
-  String _formatFileSize(int bytes) {
-    const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    double size = bytes.toDouble();
-    int index = 0;
-
-    while (size >= 1024 && index < suffixes.length - 1) {
-      size /= 1024;
-      index++;
-    }
-
-    return '${size.toStringAsFixed(2)} ${suffixes[index]}';
-  }
-
-  Future<void> onSave() async {
-    if (compressedFile.isNotEmpty) {
-      bool? success = false; // await GallerySaver.saveVideo(compressedFile);
-      if (success != null && success) {
-        print("save success");
-      }
-    }
-  }
-}
-
-class VideoInfo {
-  int width = 0;
-  int height = 0;
-  int durationInMs = 0;
-  String size = "";
-
-  VideoInfo(
-      {this.width = 0, this.height = 0, this.durationInMs = 0, this.size = ""});
 }

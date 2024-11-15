@@ -58,41 +58,43 @@ class VideoPlayerApp extends StatefulWidget {
   final Offset? durationBarTranslateOffset;
   final VoidCallback? onPlay;
   final VoidCallback? onDisposeController;
-  final ValueChanged<Size> onSizeChanged;
+  final ValueChanged<Size>? onSizeChanged;
+
   const VideoPlayerApp(
       {super.key,
-        required this.file,
-        this.shouldLoop = false,
-        this.shouldPause = false,
-        this.shouldPlay = true,
-        this.mute = false,
-        this.showVolume = false,
-        this.showBuffer = true,
-        this.pauseOnTap = false,
-        this.showDurationBar = false,
-        this.seekToStartAfterPause = true,
-        this.showPlayPauseAnimation = false,
-        this.onInactive,
-        this.onResume,
-        this.bufferCallback,
-        this.onVideoPositionUpdated,
-        this.trimStart,
-        this.trimEnd,
-        this.onVideoEnd,
-        this.initialSeekTo,
-        this.durationBarWidth,
-        this.durationBarMargin,
-        this.videoAppController,
-        this.allowSeekTo = true,
-        this.scale = 1,
-        this.autoPlayOnVisibility = false,
-        this.autoPlayVisibilityFactor = 0.65,
-        this.thumb,
-        this.thumbWidth,
-        this.thumbHeight,
-        this.durationBarTranslateOffset,
-        this.onPlay,
-        this.onDisposeController, required this.onSizeChanged});
+      required this.file,
+      this.shouldLoop = false,
+      this.shouldPause = false,
+      this.shouldPlay = true,
+      this.mute = false,
+      this.showVolume = false,
+      this.showBuffer = true,
+      this.pauseOnTap = false,
+      this.showDurationBar = false,
+      this.seekToStartAfterPause = true,
+      this.showPlayPauseAnimation = false,
+      this.onInactive,
+      this.onResume,
+      this.bufferCallback,
+      this.onVideoPositionUpdated,
+      this.trimStart,
+      this.trimEnd,
+      this.onVideoEnd,
+      this.initialSeekTo,
+      this.durationBarWidth,
+      this.durationBarMargin,
+      this.videoAppController,
+      this.allowSeekTo = true,
+      this.scale = 1,
+      this.autoPlayOnVisibility = false,
+      this.autoPlayVisibilityFactor = 0.65,
+      this.thumb,
+      this.thumbWidth,
+      this.thumbHeight,
+      this.durationBarTranslateOffset,
+      this.onPlay,
+      this.onDisposeController,
+      this.onSizeChanged});
 
   @override
   _VideoPlayerAppState createState() => _VideoPlayerAppState();
@@ -116,7 +118,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   Future<void> _init({bool onVisibility = false}) async {
     //print("video controller gesture : ${widget.videoAppController}");
     if (widget.videoAppController != null) {
-      widget.videoAppController!.onSeekStart= onSeekStart;
+      widget.videoAppController!.onSeekStart = onSeekStart;
       widget.videoAppController!.onSeek = onSeek;
       widget.videoAppController!.onSeekEnd = onSeekEnd;
     }
@@ -130,19 +132,17 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       _file = widget.file;
       _controller = _file.startsWith("http")
           ? VideoPlayerController.network(widget.file,
-          videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true))
+              videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true))
           : VideoPlayerController.file(File(widget.file),
-          videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
+              videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
       try {
         await _controller!.initialize();
       } catch (error) {
-        print(
-            "Error initializing player ${widget.file} : $error");
+        print("Error initializing player ${widget.file} : $error");
       }
-      final size = _controller!.value.size;
-      print("WIDTH : ${size.width}");
-      print("HEIGHT : ${size.height}");
-      widget.onSizeChanged(_controller!.value.size);
+      if (widget.onSizeChanged != null) {
+        widget.onSizeChanged!(_controller!.value.size);
+      }
       if (widget.initialSeekTo != null) {
         seekTo(widget.initialSeekTo!);
       }
@@ -270,7 +270,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
         pausePlayer();
         break;
       case AppLifecycleState.paused:
-      //pausePlayer();
+        //pausePlayer();
         break;
       case AppLifecycleState.detached:
         break;
@@ -355,11 +355,12 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       return;
     }
     //print("on seek callback : ${widget.videoAppController?.onSeek} : ${widget.hashCode}");
-    if (widget.videoAppController != null && widget.videoAppController!.onSeek == null) {
+    if (widget.videoAppController != null &&
+        widget.videoAppController!.onSeek == null) {
       //print("re affect call back controller");
       widget.videoAppController!.onSeekStart = onSeekStart;
       widget.videoAppController!.onSeek = onSeek;
-      widget.videoAppController!.onSeekEnd= onSeekEnd;
+      widget.videoAppController!.onSeekEnd = onSeekEnd;
     }
     /* if (_file != widget.file) {
       reload();
@@ -421,61 +422,61 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   Widget build(BuildContext context) {
     _handlePlayerState();
     return Stack(
-        alignment: Alignment.center,
-        children: [
-          if (_controller != null && _controller!.value.isInitialized)
-            GestureDetector(
-              onTap: widget.pauseOnTap
-                  ? () {
-                pauseOnTap();
-              }
-                  : null,
-              child: AspectRatio(
-                aspectRatio: _controller!.value.aspectRatio,
-                child: Stack(children: [
-                  Transform.scale(
-                      scale: widget.scale, child: VideoPlayer(_controller!)),
-                  if (widget.showBuffer)
-                    ValueListenableBuilder(
-                        valueListenable: _buffering,
-                        builder:
-                            (BuildContext context, bool value, Widget? child) {
-                          return _buffering.value
-                              ? const Center()
-                              : const SizedBox();
-                        }),
-                  if (widget.showVolume)
-                    GestureDetector(
-                      onTap: onVolumeButtonTapped,
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: ValueListenableBuilder(
-                              valueListenable: _volumeTriggeredButton,
-                              builder: (context, dyn, child) => ClipOval(
-                                child: Container(
-                                  color: Theme.of(context).primaryColor,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(
-                                      _volumeTriggeredButton.value
-                                          ? CupertinoIcons.volume_up
-                                          : CupertinoIcons.volume_off,
-                                      //color: ThemeProvider.onDarkMode ? Colors.white : ThemeProvider.shadow,
-                                      size: 18,
+      alignment: Alignment.center,
+      children: [
+        if (_controller != null && _controller!.value.isInitialized)
+          GestureDetector(
+            onTap: widget.pauseOnTap
+                ? () {
+                    pauseOnTap();
+                  }
+                : null,
+            child: AspectRatio(
+              aspectRatio: _controller!.value.aspectRatio,
+              child: Stack(children: [
+                Transform.scale(
+                    scale: widget.scale, child: VideoPlayer(_controller!)),
+                if (widget.showBuffer)
+                  ValueListenableBuilder(
+                      valueListenable: _buffering,
+                      builder:
+                          (BuildContext context, bool value, Widget? child) {
+                        return _buffering.value
+                            ? const Center()
+                            : const SizedBox();
+                      }),
+                if (widget.showVolume)
+                  GestureDetector(
+                    onTap: onVolumeButtonTapped,
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ValueListenableBuilder(
+                            valueListenable: _volumeTriggeredButton,
+                            builder: (context, dyn, child) => ClipOval(
+                                  child: Container(
+                                    color: Theme.of(context).primaryColor,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        _volumeTriggeredButton.value
+                                            ? CupertinoIcons.volume_up
+                                            : CupertinoIcons.volume_off,
+                                        //color: ThemeProvider.onDarkMode ? Colors.white : ThemeProvider.shadow,
+                                        size: 18,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )),
-                        ),
+                                )),
                       ),
                     ),
-                ]),
-              ),
+                  ),
+              ]),
             ),
-        ],
-      );
+          ),
+      ],
+    );
   }
 
   void onSeek(double value) {
@@ -495,7 +496,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     if (_controller == null) return;
     if (!_controller!.value.isPlaying) {
       _controller!.play();
-      if(widget.onPlay != null) {
+      if (widget.onPlay != null) {
         widget.onPlay!();
       }
     }
