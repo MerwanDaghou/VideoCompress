@@ -286,7 +286,9 @@ extension Compress on IVideoCompress {
         "bitrate": bitrate,
         "frameRate": frameRate,
       });
-    } catch (e) {}
+    } catch (e) {
+      throw("error while comressing ios video : $e");
+    }
     return output;
   }
 
