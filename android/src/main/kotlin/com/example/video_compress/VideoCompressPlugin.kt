@@ -200,14 +200,14 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
             "compressVideoAndroid" -> {
                 val path = call.argument<String>("path")!!
                 val output = call.argument<String>("output")!!
-                val startTime = call.argument<Int>("startTime")
-                val duration = call.argument<Int>("duration")
-                val width = call.argument<Int>("width")
-                val height = call.argument<Int>("height")
-                val bitrate = call.argument<Int>("bitrate")
-                val keyFrameInterval = call.argument<Int>("keyFrameInterval")
+                val startTime = call.argument<Int?>("startTime")
+                val duration = call.argument<Int?>("duration")
+                val width = call.argument<Int>("width")!!
+                val height = call.argument<Int>("height")!!
+                val bitrate = call.argument<Int>("bitrate")!!
+                val keyFrameInterval = call.argument<Int>("keyFrameInterval")!!
                 val includeAudio = call.argument<Boolean>("includeAudio") ?: true
-                val frameRate = call.argument<Int>("frameRate")
+                val frameRate = call.argument<Int>("frameRate")!!
 
                 val destPath: String = output
 
