@@ -216,11 +216,14 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                 val destPath: String = output
 
                 val mediaInfo = Utility(channelName).getMediaInfoJson(context, path!!)
-                println("INFO" + mediaInfo)
                 if (bitrate > mediaInfo.getInt("bitrate") / 2) {
                     bitrate = mediaInfo.getInt("bitrate") / 2
                 }
-                println("BITRATE ${bitrate}")
+
+                if (Math.max(width, height) == 480) {
+                    bitrate = bitrate / 2
+                }
+
                 val resizer: (Size) -> ExactSize = { size ->
                     ExactSize(width, height)
                 }

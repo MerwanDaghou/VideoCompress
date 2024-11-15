@@ -210,7 +210,7 @@ extension Compress on IVideoCompress {
     required String output,
     required int width,
     required int height,
-    int bitrate = 2500000,
+    int bitrate = 2000000,
     int keyFrameInterval = 1,
     int? startTime,
     int? duration,

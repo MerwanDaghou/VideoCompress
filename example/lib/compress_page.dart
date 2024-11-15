@@ -144,6 +144,7 @@ class _CompressPageState extends State<CompressPage> {
         final dir = await getTemporaryDirectory();
         File file = File(
             "${dir.path}/compress_video${DateTime.now().millisecondsSinceEpoch}.mp4");
+
         double ratio = infoOrigin.height / infoOrigin.width;
 
         double newHeight = 0;
@@ -167,12 +168,11 @@ class _CompressPageState extends State<CompressPage> {
                 width: newWidth,
                 height: newHeight)
             : (await VideoCompress.compressVideoAndroid(
-                    path: originFile,
-                    output: file.path,
-                    width: newWidth.floor(),
-                    height: newHeight.floor(),
-          bitrate: 2000000,
-        ))
+                path: originFile,
+                output: file.path,
+                width: newWidth.floor(),
+                height: newHeight.floor(),
+              ))
                 ?.path;
 
         /*await compressChannel.invokeMethod("compressVideo", {
