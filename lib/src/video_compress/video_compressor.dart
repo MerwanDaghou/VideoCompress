@@ -190,6 +190,70 @@ extension Compress on IVideoCompress {
     }
   }
 
+  /// compress video from [path]
+  /// compress video from [path] return [Future<MediaInfo>]
+  ///
+  /// you can choose its quality by [quality],
+  /// determine whether to delete his source file by [deleteOrigin]
+  /// optional parameters [startTime] [duration] [includeAudio] [frameRate]
+  ///
+  /// ## example
+  /// ```dart
+  /// final info = await _flutterVideoCompress.compressVideo(
+  ///   file.path,
+  ///   deleteOrigin: true,
+  /// );
+  /// debugPrint(info.toJson());
+  /// ```
+  Future<MediaInfo?> compressVideoAndroid({
+    required String path,
+    required String output,
+    required int width,
+    required int height,
+    int bitrate = 2500000,
+    int keyFrameInterval = 1,
+    int? startTime,
+    int? duration,
+    bool includeAudio = true,
+    int frameRate = 30,
+  }) async {
+    if (isCompressing) {
+      throw StateError('''VideoCompress Error: 
+      Method: compressVideo
+      Already have a compression process, you need to wait for the process to finish or stop it''');
+    }
+
+    if (compressProgress$.notSubscribed) {
+      debugPrint('''VideoCompress: You can try to subscribe to the 
+      compressProgress\$ stream to know the compressing state.''');
+    }
+
+    setProcessingStatus(true);
+    setProcessingFile(path);
+    final jsonStr = await _invoke<String>('compressVideoAndroid', {
+      'path': path,
+      'output': output,
+      'bitrate': bitrate,
+      "width": width,
+      "height": height,
+      "keyFrameInterval": keyFrameInterval,
+      'startTime': startTime,
+      'duration': duration,
+      'includeAudio': includeAudio,
+      'frameRate': frameRate,
+    });
+
+    setProcessingStatus(false);
+    setProcessingFile("");
+
+    if (jsonStr != null) {
+      final jsonMap = json.decode(jsonStr);
+      return MediaInfo.fromJson(jsonMap);
+    } else {
+      return null;
+    }
+  }
+
   /// The bit rate should be between 500 000 - 5 000 000 (500 kbps - 5000 kbps)
   /// for lower and higher quality.
   /// Recommended quality for mobile post is between 1 000 000 - 2 500 000 depending
@@ -208,7 +272,7 @@ extension Compress on IVideoCompress {
 
     String? output;
     try {
-       output = await compressChannel.invokeMethod("compressVideoIOS", {
+      output = await compressChannel.invokeMethod("compressVideoIOS", {
         "inputFile": input,
         "outputFile": output,
         "width": width,
@@ -216,10 +280,7 @@ extension Compress on IVideoCompress {
         "bitrate": bitrate,
         "frameRate": frameRate,
       });
-    }
-    catch(e) {
-
-    }
+    } catch (e) {}
     return output;
   }
 
