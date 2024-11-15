@@ -126,7 +126,7 @@ public class CompressManagerPlugin: NSObject, FlutterPlugin {
         // If the origin is lower than the final bitrate this is because original video is already very
         // compressed
         // So we / 2 the original video bitrate
-        if(Int(bit) < finalBitRate) {
+        if(finalBitRate > Int(bit/2)) {
             finalBitRate = Int(bit/2)
         }
 
