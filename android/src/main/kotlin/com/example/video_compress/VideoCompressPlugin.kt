@@ -205,6 +205,9 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                 val width = call.argument<Int>("width")!!
                 val height = call.argument<Int>("height")!!
                 val bitrate = call.argument<Int>("bitrate")!!
+                val sampleRate = call.argument<Int>("sampleRate")!!
+                val channels = call.argument<Int>("channels")!!
+                val audioBitRate = call.argument<Int>("audioBitRate")!!
                 val keyFrameInterval = call.argument<Int>("keyFrameInterval")!!
                 val includeAudio = call.argument<Boolean>("includeAudio") ?: true
                 val frameRate = call.argument<Int>("frameRate")!!
