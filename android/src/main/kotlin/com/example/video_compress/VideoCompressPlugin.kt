@@ -225,13 +225,13 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                     .build()
 
                 val audioTrackStrategy = if (includeAudio) {
-                    val sampleRate = 44100 // DefaultAudioStrategy.SAMPLE_RATE_AS_INPUT
-                    val channels = 2 // DefaultAudioStrategy.CHANNELS_AS_INPUT
+                    val sampleRate = sampleRate // DefaultAudioStrategy.SAMPLE_RATE_AS_INPUT
+                    val channels = channels // DefaultAudioStrategy.CHANNELS_AS_INPUT
 
                     DefaultAudioStrategy.builder()
                         .channels(channels)
                         .sampleRate(sampleRate)
-                        .bitRate(128000)
+                        .bitRate(audioBitRate)
                         .build()
                 } else {
                     RemoveTrackStrategy()
