@@ -216,6 +216,9 @@ extension Compress on IVideoCompress {
     int? duration,
     bool includeAudio = true,
     int frameRate = 30,
+    int audioBitRate = 128000,
+    int channels = 2,
+    int sampleRate = 44100
   }) async {
     if (isCompressing) {
       throw StateError('''VideoCompress Error: 
@@ -241,6 +244,9 @@ extension Compress on IVideoCompress {
       'duration': duration,
       'includeAudio': includeAudio,
       'frameRate': frameRate,
+      "channels": channels,
+      "audioBitRate": audioBitRate,
+      "sampleRate": sampleRate
     });
 
     setProcessingStatus(false);

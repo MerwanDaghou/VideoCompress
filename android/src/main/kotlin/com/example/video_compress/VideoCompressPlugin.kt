@@ -120,7 +120,7 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                         videoTrackStrategy = DefaultVideoStrategy.Builder()
                             .keyFrameInterval(3f)
                             .bitRate(1280 * 720 * 4.toLong())
-                            .frameRate(frameRate) // will be capped to the input frameRate
+                            .frameRate(frameRate!!) // will be capped to the input frameRate
                             .build()
                     }
 
@@ -200,14 +200,17 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
             "compressVideoAndroid" -> {
                 val path = call.argument<String>("path")!!
                 val output = call.argument<String>("output")!!
-                val startTime = call.argument<Int>("startTime")
-                val duration = call.argument<Int>("duration")
-                val width = call.argument<Int>("width")
-                val height = call.argument<Int>("height")
-                val bitrate = call.argument<Int>("bitrate")
-                val keyFrameInterval = call.argument<Int>("keyFrameInterval")
+                val startTime = call.argument<Int?>("startTime")
+                val duration = call.argument<Int?>("duration")
+                val width = call.argument<Int>("width")!!
+                val height = call.argument<Int>("height")!!
+                val bitrate = call.argument<Int>("bitrate")!!
+                val sampleRate = call.argument<Int>("sampleRate")!!
+                val channels = call.argument<Int>("channels")!!
+                val audioBitRate = call.argument<Int>("audioBitRate")!!
+                val keyFrameInterval = call.argument<Int>("keyFrameInterval")!!
                 val includeAudio = call.argument<Boolean>("includeAudio") ?: true
-                val frameRate = call.argument<Int>("frameRate")
+                val frameRate = call.argument<Int>("frameRate")!!
 
                 val destPath: String = output
 
