@@ -274,7 +274,6 @@ extension Compress on IVideoCompress {
       required double height,
       int bitrate = 2500000,
       int frameRate = 30}) async {
-    final MethodChannel compressChannel = MethodChannel("CompressVideo");
 
     String? output;
     try {

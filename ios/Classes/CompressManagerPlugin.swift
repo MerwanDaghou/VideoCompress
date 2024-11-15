@@ -12,7 +12,7 @@ public class CompressManagerPlugin: NSObject, FlutterPlugin {
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "CompressVideo", binaryMessenger: registrar.messenger())
-        let instance = SwiftVideoCompressPlugin(channel: channel)
+        let instance = CompressManagerPlugin(channel: channel)
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
 
