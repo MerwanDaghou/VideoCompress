@@ -110,7 +110,7 @@ class _CompressPageState extends State<CompressPage> {
   }
 
   Future<void> onNewPostTap() async {
-    final xfile = await ImagePicker().pickMedia();
+    final xfile = await ImagePicker().pickVideo(source: ImageSource.gallery);
     if (xfile != null) {
       setState(() {
         originFile = "";
