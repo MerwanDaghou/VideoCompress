@@ -1,6 +1,7 @@
 package com.example.video_compress
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
 import com.otaliastudios.transcoder.Transcoder
@@ -204,7 +205,7 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                 val duration = call.argument<Int?>("duration")
                 val width = call.argument<Int>("width")!!
                 val height = call.argument<Int>("height")!!
-                val bitrate = call.argument<Int>("bitrate")!!
+                var bitrate = call.argument<Int>("bitrate")!!
                 val sampleRate = call.argument<Int>("sampleRate")!!
                 val channels = call.argument<Int>("channels")!!
                 val audioBitRate = call.argument<Int>("audioBitRate")!!
@@ -214,9 +215,15 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
 
                 val destPath: String = output
 
+                val mediaInfo = Utility(channelName).getMediaInfoJson(context, path!!)
+                if (bitrate > mediaInfo.getInt("bitrate") / 2) {
+                    bitrate = mediaInfo.getInt("bitrate") / 2
+                }
+
                 val resizer: (Size) -> ExactSize = { size ->
                     ExactSize(width, height)
                 }
+
                 var videoTrackStrategy: TrackStrategy = DefaultVideoStrategy.Builder()
                     .bitRate(bitrate.toLong())
                     .frameRate(frameRate)
@@ -225,13 +232,13 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                     .build()
 
                 val audioTrackStrategy = if (includeAudio) {
-                    val sampleRate = sampleRate // DefaultAudioStrategy.SAMPLE_RATE_AS_INPUT
-                    val channels = channels // DefaultAudioStrategy.CHANNELS_AS_INPUT
+                    val sampleRate = DefaultAudioStrategy.SAMPLE_RATE_AS_INPUT
+                    val channels = DefaultAudioStrategy.CHANNELS_AS_INPUT
 
                     DefaultAudioStrategy.builder()
                         .channels(channels)
                         .sampleRate(sampleRate)
-                        .bitRate(audioBitRate.toLong())
+                        // .bitRate(audioBitRate.toLong())
                         .build()
                 } else {
                     RemoveTrackStrategy()

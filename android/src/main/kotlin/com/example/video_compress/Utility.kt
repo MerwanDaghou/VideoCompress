@@ -48,6 +48,7 @@ class Utility(private val channelName: String) {
         var height = heightStr?.let { java.lang.Long.parseLong(it) }
         val fileSize = file.length()
         val orientation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
+        val bitrate = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)
         val ori = orientation?.toIntOrNull()
         if (ori != null && isLandscapeImage(ori)) {
             val tmp = width
@@ -65,6 +66,7 @@ class Utility(private val channelName: String) {
         json.put("height", height)
         json.put("duration", duration)
         json.put("fileSize", fileSize)
+        json.put("bitrate", bitrate)
         if (ori != null) {
             json.put("orientation", ori)
         }

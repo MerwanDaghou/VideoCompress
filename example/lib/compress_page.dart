@@ -45,10 +45,10 @@ class _CompressPageState extends State<CompressPage> {
             const SizedBox(height: 30),
             compressedFile.isNotEmpty
                 ? media(
-                file: compressedFile,
-                info: infoCompressed,
-                mute: false,
-                width: 500)
+                    file: compressedFile,
+                    info: infoCompressed,
+                    mute: false,
+                    width: 500)
                 : const SizedBox(),
             const SizedBox(height: 30),
             Center(
@@ -159,11 +159,22 @@ class _CompressPageState extends State<CompressPage> {
         }
         print("new width : $newWidth");
         print("new height : $newHeight");
-        String? output = await VideoCompress.compressVideoIOS(
-            input: originFile,
-            output: file.path,
-            width: newWidth,
-            height: newHeight);
+
+        String? output = Platform.isIOS
+            ? await VideoCompress.compressVideoIOS(
+                input: originFile,
+                output: file.path,
+                width: newWidth,
+                height: newHeight)
+            : (await VideoCompress.compressVideoAndroid(
+                    path: originFile,
+                    output: file.path,
+                    width: newWidth.floor(),
+                    height: newHeight.floor(),
+          keyFrameInterval: 3,
+          bitrate: 2000000,
+        ))
+                ?.path;
 
         /*await compressChannel.invokeMethod("compressVideo", {
           "inputFile": originFile,
@@ -226,7 +237,7 @@ class _CompressPageState extends State<CompressPage> {
       //duration = values["duration"] ?? 0;
     } else {
       var decodedImage =
-      await decodeImageFromList(File(file).readAsBytesSync());
+          await decodeImageFromList(File(file).readAsBytesSync());
       width = decodedImage.width;
       height = decodedImage.height;
     }
@@ -277,7 +288,7 @@ class _CompressPageState extends State<CompressPage> {
 
   Future<void> onSave() async {
     if (compressedFile.isNotEmpty) {
-      bool? success = false;// await GallerySaver.saveVideo(compressedFile);
+      bool? success = false; // await GallerySaver.saveVideo(compressedFile);
       if (success != null && success) {
         print("save success");
       }
