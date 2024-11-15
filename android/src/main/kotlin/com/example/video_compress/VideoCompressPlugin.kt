@@ -231,7 +231,7 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                     DefaultAudioStrategy.builder()
                         .channels(channels)
                         .sampleRate(sampleRate)
-                        .bitRate(audioBitRate)
+                        .bitRate(audioBitRate.toLong())
                         .build()
                 } else {
                     RemoveTrackStrategy()
