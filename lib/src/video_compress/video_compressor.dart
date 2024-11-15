@@ -205,21 +205,21 @@ extension Compress on IVideoCompress {
   /// );
   /// debugPrint(info.toJson());
   /// ```
-  Future<MediaInfo?> compressVideoAndroid({
-    required String path,
-    required String output,
-    required int width,
-    required int height,
-    int bitrate = 2000000,
-    int keyFrameInterval = 1,
-    int? startTime,
-    int? duration,
-    bool includeAudio = true,
-    int frameRate = 30,
-    int audioBitRate = 128000,
-    int channels = 2,
-    int sampleRate = 44100
-  }) async {
+  Future<MediaInfo?> compressVideoAndroid(
+      {required String path,
+      required String output,
+      required int width,
+      required int height,
+      int bitrate = 1000000,
+      int keyFrameInterval = 1,
+      int? startTime,
+      int? duration,
+      bool includeAudio = true,
+      int frameRate = 30,
+      int audioBitRate = 128000,
+      int channels = 2,
+      int sampleRate = 44100,
+      bool isLowRes = false}) async {
     if (isCompressing) {
       throw StateError('''VideoCompress Error: 
       Method: compressVideo
@@ -233,6 +233,10 @@ extension Compress on IVideoCompress {
 
     setProcessingStatus(true);
     setProcessingFile(path);
+    if (isLowRes) {
+      bitrate = (bitrate / 10).floor();
+      frameRate = 20;
+    }
     final jsonStr = await _invoke<String>('compressVideoAndroid', {
       'path': path,
       'output': output,
@@ -274,10 +278,22 @@ extension Compress on IVideoCompress {
       required double height,
       int bitrate = 1000000,
       int frameRate = 30,
-        bool isLowRes=false}) async {
+      bool isLowRes = false}) async {
+    if (isCompressing) {
+      throw StateError('''VideoCompress Error: 
+      Method: compressVideo
+      Already have a compression process, you need to wait for the process to finish or stop it''');
+    }
 
-    if(isLowRes) {
-      bitrate = (bitrate/10).floor();
+    if (compressProgress$.notSubscribed) {
+      debugPrint('''VideoCompress: You can try to subscribe to the 
+      compressProgress\$ stream to know the compressing state.''');
+    }
+
+    setProcessingStatus(true);
+    setProcessingFile(input);
+    if (isLowRes) {
+      bitrate = (bitrate / 10).floor();
       frameRate = 20;
     }
     String? result;
@@ -290,6 +306,8 @@ extension Compress on IVideoCompress {
         "bitrate": bitrate,
         "frameRate": frameRate,
       });
+      setProcessingStatus(false);
+      setProcessingFile("");
     } catch (e) {
       print("error while comressing ios video : $e");
     }
