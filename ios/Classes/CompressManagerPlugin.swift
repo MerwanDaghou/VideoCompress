@@ -76,6 +76,7 @@ public class CompressManagerPlugin: NSObject, FlutterPlugin {
 
         if(assetReader == nil) {
             completion(nil,nil)
+            fatalError("asset reader is nil")
             return;
         }
 
@@ -208,6 +209,7 @@ public class CompressManagerPlugin: NSObject, FlutterPlugin {
         }
         if(assetWriter == nil) {
             completion(nil,nil)
+            fatalError("Asset writer is nil")
             return
         }
 
