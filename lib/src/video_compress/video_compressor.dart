@@ -277,7 +277,7 @@ extension Compress on IVideoCompress {
 
     String? output;
     try {
-      output = await compressChannel.invokeMethod("compressVideoIOS", {
+      output = await _invoke("compressVideoIOS", {
         "inputFile": input,
         "outputFile": output,
         "width": width,
@@ -286,7 +286,7 @@ extension Compress on IVideoCompress {
         "frameRate": frameRate,
       });
     } catch (e) {
-      throw("error while comressing ios video : $e");
+      print("error while comressing ios video : $e");
     }
     return output;
   }

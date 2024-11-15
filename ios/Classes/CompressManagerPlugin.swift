@@ -2,17 +2,17 @@ import Flutter
 import AVFoundation
 
 public class CompressManagerPlugin: NSObject, FlutterPlugin {
-    private let channel: FlutterMethodChannel
+    //private let channel: FlutterMethodChannel
     var assetReader: AVAssetReader?
     var assetWriter: AVAssetWriter?
 
-    init(channel: FlutterMethodChannel) {
-        self.channel = channel
-    }
+//    init(channel: FlutterMethodChannel) {
+//        self.channel = channel
+//    }
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "CompressVideo", binaryMessenger: registrar.messenger())
-        let instance = CompressManagerPlugin(channel: channel)
+        let instance = CompressManagerPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
 

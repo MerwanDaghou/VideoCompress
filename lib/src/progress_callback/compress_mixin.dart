@@ -6,16 +6,12 @@ class CompressMixin {
   final compressProgress$ = ObservableBuilder<double>();
   final _channel = const MethodChannel('video_compress');
 
-  final _compressChannel = const MethodChannel('CompressVideo');
-
   @protected
   void initProcessCallback() {
     _channel.setMethodCallHandler(_progressCallback);
   }
 
   MethodChannel get channel => _channel;
-
-  MethodChannel get compressChannel => _compressChannel;
 
   bool _isCompressing = false;
 
