@@ -216,10 +216,11 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                 val destPath: String = output
 
                 val mediaInfo = Utility(channelName).getMediaInfoJson(context, path!!)
+                println("INFO" + mediaInfo)
                 if (bitrate > mediaInfo.getInt("bitrate") / 2) {
                     bitrate = mediaInfo.getInt("bitrate") / 2
                 }
-
+                println("BITRATE ${bitrate}")
                 val resizer: (Size) -> ExactSize = { size ->
                     ExactSize(width, height)
                 }
@@ -238,7 +239,7 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                     DefaultAudioStrategy.builder()
                         .channels(channels)
                         .sampleRate(sampleRate)
-                        // .bitRate(audioBitRate.toLong())
+                        .bitRate(audioBitRate.toLong())
                         .build()
                 } else {
                     RemoveTrackStrategy()

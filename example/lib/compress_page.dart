@@ -151,10 +151,10 @@ class _CompressPageState extends State<CompressPage> {
 
         print("ratio : $ratio");
         if (ratio <= 1) {
-          newWidth = min(960, infoOrigin.width.floorToDouble());
+          newWidth = min(640, infoOrigin.width.floorToDouble());
           newHeight = newWidth * ratio;
         } else {
-          newHeight = min(960, infoOrigin.height.floorToDouble());
+          newHeight = min(640, infoOrigin.height.floorToDouble());
           newWidth = newHeight / ratio;
         }
         print("new width : $newWidth");
@@ -171,7 +171,6 @@ class _CompressPageState extends State<CompressPage> {
                     output: file.path,
                     width: newWidth.floor(),
                     height: newHeight.floor(),
-          keyFrameInterval: 3,
           bitrate: 2000000,
         ))
                 ?.path;
