@@ -190,6 +190,13 @@ extension Compress on IVideoCompress {
     }
   }
 
+  /// The bit rate should be between 500 000 - 5 000 000 (500 kbps - 5000 kbps)
+  /// for lower and higher quality.
+  /// Recommended quality for mobile post is between 1 000 000 - 2 500 000 depending
+  /// on the original video file quality and compression.
+  /// Can be between 100 000 and 500 000 for a low res vid.
+  ///
+  /// The lower the bitrate will be, the lower the video size/quality will be.
   Future<String?> compressVideoIOS(
       {required String input,
       required String output,
