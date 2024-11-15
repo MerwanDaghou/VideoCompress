@@ -116,7 +116,8 @@ extension Compress on IVideoCompress {
     int? height = info.height;
     bool shouldCompress = true;
     if (width != null && height != null) {
-      shouldCompress = (width > 1100 && height > 640) || (height > 1100 && width > 640);
+      shouldCompress =
+          (width > 1100 && height > 640) || (height > 1100 && width > 640);
     }
     debugPrint("Should compress : $shouldCompress");
     return shouldCompress;
@@ -144,14 +145,13 @@ extension Compress on IVideoCompress {
     required String output,
     int? startTime,
     int? duration,
-    bool shouldAvoidCompressionIfNotNeeded=true,
+    bool shouldAvoidCompressionIfNotNeeded = true,
     bool? includeAudio,
     int frameRate = 30,
   }) async {
-
-    bool shouldCompress = shouldAvoidCompressionIfNotNeeded ? await _shouldCompress(path) : true;
+    bool shouldCompress =
+        shouldAvoidCompressionIfNotNeeded ? await _shouldCompress(path) : true;
     if (shouldCompress) {
-
       if (isCompressing) {
         throw StateError('''VideoCompress Error: 
       Method: compressVideo
@@ -188,6 +188,32 @@ extension Compress on IVideoCompress {
     } else {
       return getMediaInfo(path);
     }
+  }
+
+  Future<String?> compressVideoIOS(
+      {required String input,
+      required String output,
+      required double width,
+      required double height,
+      int bitrate = 2500000,
+      int frameRate = 30}) async {
+    final MethodChannel compressChannel = MethodChannel("CompressVideo");
+
+    String? output;
+    try {
+       output = await compressChannel.invokeMethod("compressVideo", {
+        "inputFile": input,
+        "outputFile": output,
+        "width": width,
+        "height": height,
+        "bitrate": bitrate,
+        "frameRate": frameRate,
+      });
+    }
+    catch(e) {
+
+    }
+    return output;
   }
 
   /// stop compressing the file that is currently being compressed.
