@@ -4,5 +4,8 @@
 @implementation VideoCompressPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   [SwiftVideoCompressPlugin registerWithRegistrar:registrar];
+  [CompressManagerPlugin registerWithRegistrar:registrar];
 }
+
+
 @end
