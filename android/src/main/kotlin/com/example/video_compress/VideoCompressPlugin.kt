@@ -220,10 +220,6 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                     bitrate = mediaInfo.getInt("bitrate") / 2
                 }
 
-                if (Math.max(width, height) == 480) {
-                    bitrate = bitrate / 2
-                }
-
                 val resizer: (Size) -> ExactSize = { size ->
                     ExactSize(width, height)
                 }
