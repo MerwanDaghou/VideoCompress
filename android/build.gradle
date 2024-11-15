@@ -47,7 +47,5 @@ dependencies {
     //implementation 'com.github.jumperson:Transcoder'
     //implementation 'com.otaliastudios:transcoder:0.10.4'
     implementation 'com.github.Tom3652:Transcoder:v0.10.9'
-    implementation "io.flutter:flutter_embedding:3.0.0" // Use the latest version compatible with Flutter
-
     //implementation files('./src/main/transcoder.aar')
 }
