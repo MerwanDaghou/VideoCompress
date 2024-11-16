@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:mime/mime.dart';
 import 'package:video_compress/video_compress.dart';
 
@@ -85,8 +86,8 @@ class MediaManager {
 
   Future<void> onSave(String path) async {
     if (path.isNotEmpty) {
-      bool? success = false; // await GallerySaver.saveVideo(compressedFile);
-      if (success != null && success) {
+      bool? success = await GallerySaver.saveVideo(path);
+      if(success != null && success) {
         print("save success");
       }
     }

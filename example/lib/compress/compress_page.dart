@@ -75,7 +75,7 @@ class _CompressPageState extends State<CompressPage> {
                     file: compressedFile,
                     info: infoCompressed,
                     mute: false,
-                    width: 500)
+                    width: 200)
                 : const SizedBox(),
             const SizedBox(height: 30),
             Center(
@@ -86,13 +86,13 @@ class _CompressPageState extends State<CompressPage> {
               ),
             ),
             const SizedBox(height: 30),
-           /* Center(
+            Center(
               child: CupertinoButton(
                 color: Colors.redAccent,
                 onPressed: onSave,
                 child: const Text("Save"),
               ),
-            ),*/
+            ),
             const SizedBox(height: 50),
           ],
         ),
@@ -167,7 +167,7 @@ class _CompressPageState extends State<CompressPage> {
         File file = File(
             "${dir.path}/compress_video${DateTime.now().millisecondsSinceEpoch}.mp4");
 
-        bool isLowRes = false;
+        bool isLowRes = true;
         double ratio = infoOrigin.height / infoOrigin.width;
 
         double newHeight = 0;
@@ -191,6 +191,7 @@ class _CompressPageState extends State<CompressPage> {
                 input: originFile,
                 output: file.path,
                 bitrate: 1000000,
+                bitrateLowResFactor: 5.5,
                 width: newWidth,
                 height: newHeight,
                 isLowRes: isLowRes)
@@ -248,4 +249,8 @@ class _CompressPageState extends State<CompressPage> {
 
 
 
+
+  void onSave() {
+    mediaManager.onSave(compressedFile);
+  }
 }
