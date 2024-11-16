@@ -235,7 +235,6 @@ extension Compress on IVideoCompress {
     setProcessingFile(path);
     if (isLowRes) {
       bitrate = (bitrate / 10).floor();
-      frameRate = 20;
     }
     final jsonStr = await _invoke<String>('compressVideoAndroid', {
       'path': path,
@@ -294,7 +293,6 @@ extension Compress on IVideoCompress {
     setProcessingFile(input);
     if (isLowRes) {
       bitrate = (bitrate / 10).floor();
-      frameRate = 20;
     }
     String? result;
     try {
