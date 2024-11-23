@@ -219,7 +219,9 @@ extension Compress on IVideoCompress {
       int audioBitRate = 128000,
       int channels = 2,
       int sampleRate = 44100,
-      bool isLowRes = false}) async {
+        double bitrateLowResFactor = 5.5,
+
+        bool isLowRes = false}) async {
     if (isCompressing) {
       throw StateError('''VideoCompress Error: 
       Method: compressVideo
@@ -234,8 +236,7 @@ extension Compress on IVideoCompress {
     setProcessingStatus(true);
     setProcessingFile(path);
     if (isLowRes) {
-      bitrate = (bitrate / 10).floor();
-      frameRate = 20;
+      bitrate = (bitrate / bitrateLowResFactor).floor();
     }
     final jsonStr = await _invoke<String>('compressVideoAndroid', {
       'path': path,
@@ -277,6 +278,7 @@ extension Compress on IVideoCompress {
       required double width,
       required double height,
       int bitrate = 1000000,
+        double bitrateLowResFactor = 5.5,
       int frameRate = 30,
       bool isLowRes = false}) async {
     if (isCompressing) {
@@ -293,8 +295,7 @@ extension Compress on IVideoCompress {
     setProcessingStatus(true);
     setProcessingFile(input);
     if (isLowRes) {
-      bitrate = (bitrate / 10).floor();
-      frameRate = 20;
+      bitrate = (bitrate / bitrateLowResFactor).floor();
     }
     String? result;
     try {
