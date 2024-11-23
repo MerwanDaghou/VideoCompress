@@ -9,6 +9,7 @@ import com.otaliastudios.transcoder.TranscoderListener
 import com.otaliastudios.transcoder.common.ExactSize
 import com.otaliastudios.transcoder.common.Size
 import com.otaliastudios.transcoder.internal.utils.Logger
+import com.otaliastudios.transcoder.resize.AtMostResizer
 import com.otaliastudios.transcoder.source.TrimDataSource
 import com.otaliastudios.transcoder.source.UriDataSource
 import com.otaliastudios.transcoder.strategy.DefaultAudioStrategy
@@ -203,8 +204,7 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                 val output = call.argument<String>("output")!!
                 val startTime = call.argument<Int?>("startTime")
                 val duration = call.argument<Int?>("duration")
-                val width = call.argument<Int>("width")!!
-                val height = call.argument<Int>("height")!!
+                val maxSize = call.argument<Int>("maxSize")!!
                 var bitrate = call.argument<Int>("bitrate")!!
                 val sampleRate = call.argument<Int>("sampleRate")!!
                 val channels = call.argument<Int>("channels")!!
@@ -220,15 +220,11 @@ class VideoCompressPlugin : MethodCallHandler, FlutterPlugin {
                     bitrate = mediaInfo.getInt("bitrate") / 2
                 }
 
-                val resizer: (Size) -> ExactSize = { size ->
-                    ExactSize(width, height)
-                }
-
                 var videoTrackStrategy: TrackStrategy = DefaultVideoStrategy.Builder()
                     .bitRate(bitrate.toLong())
                     .frameRate(frameRate)
                     .keyFrameInterval(keyFrameInterval.toFloat())
-                    .addResizer(resizer)
+                    .addResizer(AtMostResizer(maxSize))
                     .build()
 
                 val audioTrackStrategy = if (includeAudio) {
