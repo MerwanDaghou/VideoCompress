@@ -1,13 +1,10 @@
 package com.example.video_compress
 
 import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
 import com.otaliastudios.transcoder.Transcoder
 import com.otaliastudios.transcoder.TranscoderListener
-import com.otaliastudios.transcoder.common.ExactSize
-import com.otaliastudios.transcoder.common.Size
 import com.otaliastudios.transcoder.internal.utils.Logger
 import com.otaliastudios.transcoder.resize.AtMostResizer
 import com.otaliastudios.transcoder.source.TrimDataSource

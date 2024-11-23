@@ -219,7 +219,6 @@ extension Compress on IVideoCompress {
       int channels = 2,
       int sampleRate = 44100,
         double bitrateLowResFactor = 5.5,
-
         bool isLowRes = false}) async {
     if (isCompressing) {
       throw StateError('''VideoCompress Error: 
