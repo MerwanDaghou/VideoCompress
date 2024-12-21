@@ -34,6 +34,11 @@ class Utility(private val channelName: String) {
 
     fun getMediaInfoJson(context: Context, path: String): JSONObject {
         val file = File(path)
+        val json = JSONObject()
+        if (!file.exists()) {
+            json.put("error", true)
+            return json
+        }
         val retriever = MediaMetadataRetriever()
 
         retriever.setDataSource(context, Uri.fromFile(file))
@@ -56,8 +61,6 @@ class Utility(private val channelName: String) {
             height = tmp
         }
         retriever.release()
-
-        val json = JSONObject()
 
         json.put("path", path)
         json.put("title", title)
