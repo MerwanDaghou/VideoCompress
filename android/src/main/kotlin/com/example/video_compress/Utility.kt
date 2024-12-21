@@ -36,14 +36,7 @@ class Utility(private val channelName: String) {
         val file = File(path)
         val json = JSONObject()
         if (!file.exists()) {
-            json.put("path", path)
-            json.put("title", "")
-            json.put("author", "")
-            json.put("width", 0)
-            json.put("height", 0)
-            json.put("duration", 0)
-            json.put("fileSize", 0)
-            json.put("bitrate", 0)
+            json.put("error", true)
             return json
         }
         val retriever = MediaMetadataRetriever()

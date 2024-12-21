@@ -254,7 +254,7 @@ extension Compress on IVideoCompress {
     setProcessingStatus(false);
     setProcessingFile("");
 
-    if (jsonStr != null) {
+    if (jsonStr != null && !jsonStr.contains("error")) {
       final jsonMap = json.decode(jsonStr);
       return MediaInfo.fromJson(jsonMap);
     } else {
